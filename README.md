@@ -29,9 +29,7 @@ The goal is to make it obvious, over time, whether the problem is your strategy 
 
 ## Live site
 
-`https://<your-username>.github.io/<repo-name>/`
-
-*(replace with your actual GitHub Pages URL once it's live)*
+`https://jayesh2505.github.io/Trading-Journal/`
 
 ## Getting started
 
@@ -41,7 +39,7 @@ Open the live site above. That's it.
 ### Run it locally
 No build step, no install:
 ```bash
-git clone https://github.com/<your-username>/<repo-name>.git
+git clone https://github.com/JAYESH2505/Trading-Journal.git
 cd <repo-name>
 ```
 Then just open `index.html` in a browser.
