@@ -1,0 +1,655 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+  #tj-root {
+    --bg: #12141a;
+    --surface: #1a1d25;
+    --surface-2: #21252f;
+    --border: #2c313d;
+    --ink: #eae7df;
+    --ink-dim: #8d93a1;
+    --ink-faint: #5c6270;
+    --primary: #6fa8a1;
+    --primary-dim: #4d7570;
+    --win: #57a97e;
+    --win-bg: rgba(87, 169, 126, 0.12);
+    --disc-loss: #5b8fc2;
+    --disc-loss-bg: rgba(91, 143, 194, 0.12);
+    --luck: #d3a24a;
+    --luck-bg: rgba(211, 162, 74, 0.14);
+    --bad: #c05f52;
+    --bad-bg: rgba(192, 95, 82, 0.13);
+    --neutral: #6b7080;
+
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100%;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #tj-root * { box-sizing: border-box; }
+  #tj-root .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #tj-root * { transition: none !important; animation: none !important; }
+  }
+
+  #tj-root .tj-wrap { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  /* header */
+  #tj-root .tj-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--primary);
+    text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+  #tj-root h1 { font-size: 26px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em; }
+  #tj-root .tj-sub { color: var(--ink-dim); font-size: 14px; margin: 0 0 22px; max-width: 560px; }
+
+  /* stat strip */
+  #tj-root .tj-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  #tj-root .tj-stat { background: var(--surface); padding: 14px 16px; }
+  #tj-root .tj-stat-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+  #tj-root .tj-stat-val { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; }
+
+  /* layout grid */
+  #tj-root .tj-main-grid { display: grid; grid-template-columns: 340px 1fr; gap: 18px; align-items: start; }
+  @media (max-width: 860px) { #tj-root .tj-main-grid { grid-template-columns: 1fr; } }
+
+  #tj-root .tj-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  #tj-root .tj-card-title { font-size: 13px; font-weight: 600; color: var(--ink); margin: 0 0 4px; }
+  #tj-root .tj-card-hint { font-size: 12px; color: var(--ink-faint); margin: 0 0 16px; }
+
+  /* form */
+  #tj-root .tj-field { margin-bottom: 12px; }
+  #tj-root .tj-field label { display: block; font-size: 11px; color: var(--ink-dim); margin-bottom: 5px; }
+  #tj-root .tj-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  #tj-root .tj-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  #tj-root input[type="text"],
+  #tj-root input[type="date"],
+  #tj-root input[type="number"],
+  #tj-root textarea {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    border-radius: 7px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  #tj-root input:focus-visible, #tj-root textarea:focus-visible, #tj-root button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 1px;
+  }
+  #tj-root textarea { resize: vertical; min-height: 54px; }
+
+  #tj-root .tj-toggle-group { display: flex; gap: 8px; }
+  #tj-root .tj-toggle-btn {
+    flex: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--ink-dim);
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+  #tj-root .tj-toggle-btn.active-long, #tj-root .tj-toggle-btn.active-yes {
+    background: var(--win-bg); border-color: var(--win); color: var(--win);
+  }
+  #tj-root .tj-toggle-btn.active-short { background: var(--disc-loss-bg); border-color: var(--disc-loss); color: var(--disc-loss); }
+  #tj-root .tj-toggle-btn.active-no { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+
+  #tj-root .tj-btn-submit {
+    width: 100%;
+    background: var(--primary);
+    color: #10151a;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  #tj-root .tj-btn-submit:hover { background: #7fb6af; }
+  #tj-root .tj-error { color: var(--bad); font-size: 12px; margin-top: 8px; min-height: 16px; }
+
+  /* quadrant */
+  #tj-root .tj-quad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  #tj-root .tj-quad-cell { border-radius: 9px; padding: 12px 14px; border: 1px solid transparent; }
+  #tj-root .tj-quad-num { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 700; }
+  #tj-root .tj-quad-label { font-size: 12px; font-weight: 600; margin-top: 2px; }
+  #tj-root .tj-quad-desc { font-size: 11px; color: var(--ink-dim); margin-top: 3px; }
+  #tj-root .q-dw { background: var(--win-bg); border-color: rgba(87,169,126,0.3); }
+  #tj-root .q-dw .tj-quad-num, #tj-root .q-dw .tj-quad-label { color: var(--win); }
+  #tj-root .q-dl { background: var(--disc-loss-bg); border-color: rgba(91,143,194,0.3); }
+  #tj-root .q-dl .tj-quad-num, #tj-root .q-dl .tj-quad-label { color: var(--disc-loss); }
+  #tj-root .q-lw { background: var(--luck-bg); border-color: rgba(211,162,74,0.3); }
+  #tj-root .q-lw .tj-quad-num, #tj-root .q-lw .tj-quad-label { color: var(--luck); }
+  #tj-root .q-ul { background: var(--bad-bg); border-color: rgba(192,95,82,0.3); }
+  #tj-root .q-ul .tj-quad-num, #tj-root .q-ul .tj-quad-label { color: var(--bad); }
+  #tj-root .tj-quad-foot { font-size: 11px; color: var(--ink-faint); margin-top: 10px; }
+
+  /* chart */
+  #tj-root .tj-chart-svg { width: 100%; height: auto; display: block; }
+
+  /* table */
+  #tj-root .tj-table-card { margin-top: 18px; }
+  #tj-root .tj-filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  #tj-root .tj-chip {
+    background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-dim);
+    font-size: 11px; padding: 5px 10px; border-radius: 20px; cursor: pointer;
+  }
+  #tj-root .tj-chip.active { background: var(--primary); color: #10151a; border-color: var(--primary); }
+
+  #tj-root table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  #tj-root th { text-align: left; color: var(--ink-faint); font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 0 10px 8px; }
+  #tj-root td { padding: 9px 10px; border-top: 1px solid var(--border); vertical-align: top; }
+  #tj-root tr.tj-trade-row td:first-child { border-left: 3px solid var(--neutral); }
+  #tj-root tr.q-dw td:first-child { border-left-color: var(--win); }
+  #tj-root tr.q-dl td:first-child { border-left-color: var(--disc-loss); }
+  #tj-root tr.q-lw td:first-child { border-left-color: var(--luck); }
+  #tj-root tr.q-ul td:first-child { border-left-color: var(--bad); }
+  #tj-root .tj-r-pos { color: var(--win); font-family: 'IBM Plex Mono', monospace; }
+  #tj-root .tj-r-neg { color: var(--bad); font-family: 'IBM Plex Mono', monospace; }
+  #tj-root .tj-r-zero { color: var(--ink-faint); font-family: 'IBM Plex Mono', monospace; }
+  #tj-root .tj-notes-cell { color: var(--ink-dim); max-width: 220px; }
+  #tj-root .tj-del-btn { background: none; border: none; color: var(--ink-faint); cursor: pointer; font-size: 15px; padding: 2px 6px; }
+  #tj-root .tj-del-btn:hover { color: var(--bad); }
+
+  #tj-root .tj-empty { text-align: center; padding: 40px 20px; color: var(--ink-dim); font-size: 13px; }
+
+  #tj-root .tj-footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+  #tj-root .tj-reset-btn { background: none; border: 1px solid var(--border); color: var(--ink-faint); font-size: 11px; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+  #tj-root .tj-reset-btn:hover { color: var(--bad); border-color: var(--bad); }
+  #tj-root .tj-loading { color: var(--ink-faint); font-size: 13px; padding: 30px 0; text-align: center; }
+</style>
+
+<div id="tj-root">
+  <div class="tj-wrap">
+    <p class="tj-eyebrow">Trade Journal</p>
+    <h1>Process Log</h1>
+    <p class="tj-sub">Track whether you followed your rule separately from whether the trade won. That split is the whole point — a loss with the rule followed is good process. A win with the rule broken is not.</p>
+
+    <div id="tj-stats" class="tj-stats"></div>
+
+    <div class="tj-main-grid">
+      <div class="tj-card">
+        <p class="tj-card-title">Log a trade</p>
+        <p class="tj-card-hint">Fill in entry / stop / exit to auto-calc R, or type it directly.</p>
+
+        <form id="tj-form">
+          <div class="tj-row2">
+            <div class="tj-field">
+              <label for="tj-date">Date</label>
+              <input type="date" id="tj-date">
+            </div>
+            <div class="tj-field">
+              <label for="tj-instrument">Instrument</label>
+              <input type="text" id="tj-instrument" placeholder="e.g. NIFTY, BTCUSDT">
+            </div>
+          </div>
+
+          <div class="tj-field">
+            <label>Direction</label>
+            <div class="tj-toggle-group">
+              <button type="button" class="tj-toggle-btn active-long" data-dir="long">Long</button>
+              <button type="button" class="tj-toggle-btn" data-dir="short">Short</button>
+            </div>
+          </div>
+
+          <div class="tj-field">
+            <label for="tj-setup">Setup</label>
+            <input type="text" id="tj-setup" placeholder="e.g. BOS + retest">
+          </div>
+
+          <div class="tj-row3">
+            <div class="tj-field">
+              <label for="tj-entry">Entry</label>
+              <input type="number" step="any" id="tj-entry">
+            </div>
+            <div class="tj-field">
+              <label for="tj-stop">Stop</label>
+              <input type="number" step="any" id="tj-stop">
+            </div>
+            <div class="tj-field">
+              <label for="tj-exit">Exit</label>
+              <input type="number" step="any" id="tj-exit">
+            </div>
+          </div>
+
+          <div class="tj-field">
+            <label for="tj-r">R-multiple</label>
+            <input type="number" step="any" id="tj-r" placeholder="auto-calculated, or type your own">
+          </div>
+
+          <div class="tj-field">
+            <label>Did you follow your rule?</label>
+            <div class="tj-toggle-group">
+              <button type="button" class="tj-toggle-btn" data-rule="yes">Followed it</button>
+              <button type="button" class="tj-toggle-btn" data-rule="no">Broke it</button>
+            </div>
+          </div>
+
+          <div class="tj-field">
+            <label for="tj-notes">Notes</label>
+            <textarea id="tj-notes" placeholder="What happened, what you felt, what you'd repeat or change"></textarea>
+          </div>
+
+          <button type="submit" class="tj-btn-submit">Log trade</button>
+          <div class="tj-error" id="tj-error"></div>
+        </form>
+      </div>
+
+      <div>
+        <div class="tj-card">
+          <p class="tj-card-title">Equity curve (cumulative R)</p>
+          <p class="tj-card-hint">Each point is one trade, in the order you logged it.</p>
+          <div id="tj-chart"></div>
+        </div>
+
+        <div class="tj-card" style="margin-top: 18px;">
+          <p class="tj-card-title">Process &times; Outcome</p>
+          <p class="tj-card-hint">Where your trades actually fall.</p>
+          <div id="tj-quadrant"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tj-card tj-table-card">
+      <p class="tj-card-title">Trade history</p>
+      <div class="tj-filters" id="tj-filters">
+        <button class="tj-chip active" data-filter="all">All</button>
+        <button class="tj-chip" data-filter="q-dw">Disciplined wins</button>
+        <button class="tj-chip" data-filter="q-dl">Disciplined losses</button>
+        <button class="tj-chip" data-filter="q-lw">Lucky wins</button>
+        <button class="tj-chip" data-filter="q-ul">Undisciplined losses</button>
+      </div>
+      <div id="tj-table-wrap"></div>
+    </div>
+
+    <div class="tj-footer-row">
+      <span class="mono" id="tj-storage-note" style="font-size:11px; color: var(--ink-faint);">Checking storage…</span>
+      <div style="display:flex; gap:8px;">
+        <button class="tj-reset-btn" id="tj-export">Export backup</button>
+        <button class="tj-reset-btn" id="tj-import">Import backup</button>
+        <input type="file" id="tj-import-file" accept="application/json" style="display:none;">
+        <button class="tj-reset-btn" id="tj-reset">Clear all trades</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  let trades = [];
+  let direction = 'long';
+  let ruleFollowed = null;
+  let activeFilter = 'all';
+  const root = document.getElementById('tj-root');
+
+  const $ = (id) => document.getElementById(id);
+
+  function classify(t) {
+    if (t.r === 0) return 'breakeven';
+    const win = t.r > 0;
+    if (t.ruleFollowed && win) return 'q-dw';
+    if (t.ruleFollowed && !win) return 'q-dl';
+    if (!t.ruleFollowed && win) return 'q-lw';
+    return 'q-ul';
+  }
+
+  function fmtR(r) {
+    const sign = r > 0 ? '+' : '';
+    return sign + r.toFixed(2) + 'R';
+  }
+
+  // ---------- storage (browser localStorage, per-device) ----------
+  const STORAGE_KEY = 'tj_trades_v1';
+  let storageAvailable = true;
+
+  function checkStorage() {
+    try {
+      const testKey = '__tj_test__';
+      localStorage.setItem(testKey, '1');
+      localStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ---------- init ----------
+  function init() {
+    $('tj-date').value = new Date().toISOString().slice(0, 10);
+    storageAvailable = checkStorage();
+
+    if (!storageAvailable) {
+      trades = [];
+      $('tj-storage-note').innerHTML = '⚠ This browser is blocking local storage (common in private/incognito mode or inside an embedded preview). Trades will only last until you close this tab. Open the downloaded HTML file directly in a normal browser tab to fix this.';
+      $('tj-storage-note').style.color = 'var(--bad)';
+      renderAll();
+      return;
+    }
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      trades = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      trades = [];
+    }
+    $('tj-storage-note').textContent = 'Saved in this browser, on this device';
+    renderAll();
+  }
+
+  function persist() {
+    if (!storageAvailable) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
+    } catch (e) {
+      console.error('Storage error:', e);
+      $('tj-error').textContent = 'Could not save that trade — your browser storage may be full or blocked.';
+    }
+  }
+
+  // ---------- form interactions ----------
+  root.querySelectorAll('[data-dir]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      direction = btn.dataset.dir;
+      root.querySelectorAll('[data-dir]').forEach(b => {
+        b.classList.remove('active-long', 'active-short');
+      });
+      btn.classList.add(direction === 'long' ? 'active-long' : 'active-short');
+      computeR();
+    });
+  });
+
+  root.querySelectorAll('[data-rule]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ruleFollowed = btn.dataset.rule === 'yes';
+      root.querySelectorAll('[data-rule]').forEach(b => b.classList.remove('active-yes', 'active-no'));
+      btn.classList.add(ruleFollowed ? 'active-yes' : 'active-no');
+    });
+  });
+
+  ['tj-entry', 'tj-stop', 'tj-exit'].forEach(id => {
+    $(id).addEventListener('input', computeR);
+  });
+
+  function computeR() {
+    const entry = parseFloat($('tj-entry').value);
+    const stop = parseFloat($('tj-stop').value);
+    const exit = parseFloat($('tj-exit').value);
+    if (isNaN(entry) || isNaN(stop) || isNaN(exit) || entry === stop) return;
+    const risk = direction === 'long' ? entry - stop : stop - entry;
+    if (risk === 0) return;
+    const reward = direction === 'long' ? exit - entry : entry - exit;
+    $('tj-r').value = (reward / risk).toFixed(2);
+  }
+
+  $('tj-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $('tj-error').textContent = '';
+
+    const instrument = $('tj-instrument').value.trim();
+    const rVal = parseFloat($('tj-r').value);
+
+    if (!instrument) { $('tj-error').textContent = 'Add an instrument.'; return; }
+    if (isNaN(rVal)) { $('tj-error').textContent = 'Enter entry/stop/exit, or type an R-multiple directly.'; return; }
+    if (ruleFollowed === null) { $('tj-error').textContent = 'Mark whether you followed your rule.'; return; }
+
+    const trade = {
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+      date: $('tj-date').value || new Date().toISOString().slice(0, 10),
+      instrument,
+      direction,
+      setup: $('tj-setup').value.trim(),
+      entry: $('tj-entry').value ? parseFloat($('tj-entry').value) : null,
+      stop: $('tj-stop').value ? parseFloat($('tj-stop').value) : null,
+      exit: $('tj-exit').value ? parseFloat($('tj-exit').value) : null,
+      r: rVal,
+      ruleFollowed,
+      notes: $('tj-notes').value.trim()
+    };
+
+    trades.push(trade);
+    await persist();
+    resetForm();
+    renderAll();
+  });
+
+  function resetForm() {
+    $('tj-form').reset();
+    $('tj-date').value = new Date().toISOString().slice(0, 10);
+    direction = 'long';
+    ruleFollowed = null;
+    root.querySelectorAll('[data-dir]').forEach(b => b.classList.remove('active-long', 'active-short'));
+    root.querySelector('[data-dir="long"]').classList.add('active-long');
+    root.querySelectorAll('[data-rule]').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  }
+
+  $('tj-reset').addEventListener('click', async () => {
+    if (!confirm('Delete all logged trades? This cannot be undone.')) return;
+    trades = [];
+    await persist();
+    renderAll();
+  });
+
+  $('tj-export').addEventListener('click', () => {
+    if (!trades.length) { alert('No trades to export yet.'); return; }
+    const blob = new Blob([JSON.stringify(trades, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'trading-journal-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  $('tj-import').addEventListener('click', () => $('tj-import-file').click());
+
+  $('tj-import-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const imported = JSON.parse(evt.target.result);
+        if (!Array.isArray(imported)) throw new Error('not an array');
+        const replace = confirm(`Import ${imported.length} trade(s)? Click OK to replace your current journal, or Cancel to merge with existing trades.`);
+        trades = replace ? imported : trades.concat(imported);
+        await persist();
+        renderAll();
+      } catch (err) {
+        alert('Could not read that file — make sure it\'s a backup exported from this journal.');
+      }
+      $('tj-import-file').value = '';
+    };
+    reader.readAsText(file);
+  });
+
+  root.querySelectorAll('.tj-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      activeFilter = chip.dataset.filter;
+      root.querySelectorAll('.tj-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      renderTable();
+    });
+  });
+
+  // ---------- rendering ----------
+  function renderAll() {
+    renderStats();
+    renderChart();
+    renderQuadrant();
+    renderTable();
+  }
+
+  function renderStats() {
+    const total = trades.length;
+    const decisive = trades.filter(t => t.r !== 0);
+    const wins = trades.filter(t => t.r > 0).length;
+    const winRate = decisive.length ? (wins / decisive.length * 100) : 0;
+    const ruleRate = total ? (trades.filter(t => t.ruleFollowed).length / total * 100) : 0;
+    const totalR = trades.reduce((s, t) => s + t.r, 0);
+    const expectancy = total ? totalR / total : 0;
+
+    $('tj-stats').innerHTML = `
+      <div class="tj-stat"><div class="tj-stat-label">Trades</div><div class="tj-stat-val mono">${total}</div></div>
+      <div class="tj-stat"><div class="tj-stat-label">Win rate</div><div class="tj-stat-val mono">${total ? winRate.toFixed(0) + '%' : '—'}</div></div>
+      <div class="tj-stat"><div class="tj-stat-label">Rule adherence</div><div class="tj-stat-val mono">${total ? ruleRate.toFixed(0) + '%' : '—'}</div></div>
+      <div class="tj-stat"><div class="tj-stat-label">Expectancy</div><div class="tj-stat-val mono" style="color:${expectancy > 0 ? 'var(--win)' : expectancy < 0 ? 'var(--bad)' : 'var(--ink)'}">${total ? fmtR(expectancy) : '—'}</div></div>
+    `;
+  }
+
+  function renderChart() {
+    const el = $('tj-chart');
+    if (!trades.length) {
+      el.innerHTML = '<div class="tj-empty">Your equity curve will show up here after your first trade.</div>';
+      return;
+    }
+    const width = 600, height = 190, pad = 26;
+    let cum = 0;
+    const pts = trades.map(t => { cum += t.r; return { y: cum, cls: classify(t), r: t.r }; });
+    const maxY = Math.max(0, ...pts.map(p => p.y));
+    const minY = Math.min(0, ...pts.map(p => p.y));
+    const rangeY = (maxY - minY) || 1;
+    const stepX = pts.length > 1 ? (width - 2 * pad) / (pts.length - 1) : 0;
+    const scaleY = v => height - pad - ((v - minY) / rangeY) * (height - 2 * pad);
+    const coords = pts.map((p, i) => ({ x: pad + i * stepX, y: scaleY(p.y), ...p }));
+    const zeroY = scaleY(0);
+    const pathD = coords.map((c, i) => (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1)).join(' ');
+    const last = coords[coords.length - 1];
+    const areaD = pathD + ` L${last.x.toFixed(1)},${zeroY.toFixed(1)} L${coords[0].x.toFixed(1)},${zeroY.toFixed(1)} Z`;
+    const colorMap = { 'q-dw': 'var(--win)', 'q-dl': 'var(--disc-loss)', 'q-lw': 'var(--luck)', 'q-ul': 'var(--bad)', 'breakeven': 'var(--neutral)' };
+    const lineColor = last.y >= zeroY - 0.01 && cum >= 0 ? 'var(--win)' : 'var(--bad)';
+
+    const dots = coords.map((c, i) => `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="3" fill="${colorMap[c.cls]}"><title>Trade ${i + 1}: ${fmtR(c.r)}</title></circle>`).join('');
+
+    el.innerHTML = `
+      <svg class="tj-chart-svg" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+        <line x1="${pad}" y1="${zeroY.toFixed(1)}" x2="${width - pad}" y2="${zeroY.toFixed(1)}" stroke="var(--border)" stroke-dasharray="4 4" stroke-width="1"/>
+        <path d="${areaD}" fill="var(--primary)" opacity="0.08"/>
+        <path d="${pathD}" fill="none" stroke="${lineColor}" stroke-width="2"/>
+        ${dots}
+      </svg>
+    `;
+  }
+
+  function renderQuadrant() {
+    const el = $('tj-quadrant');
+    const counts = { 'q-dw': 0, 'q-dl': 0, 'q-lw': 0, 'q-ul': 0, breakeven: 0 };
+    trades.forEach(t => counts[classify(t)]++);
+    const total = trades.length || 1;
+    const pct = (n) => trades.length ? Math.round(n / total * 100) : 0;
+
+    el.innerHTML = `
+      <div class="tj-quad-grid">
+        <div class="tj-quad-cell q-dw">
+          <div class="tj-quad-num">${counts['q-dw']}<span style="font-size:12px;opacity:0.7"> · ${pct(counts['q-dw'])}%</span></div>
+          <div class="tj-quad-label">Disciplined win</div>
+          <div class="tj-quad-desc">Followed the rule, it worked</div>
+        </div>
+        <div class="tj-quad-cell q-dl">
+          <div class="tj-quad-num">${counts['q-dl']}<span style="font-size:12px;opacity:0.7"> · ${pct(counts['q-dl'])}%</span></div>
+          <div class="tj-quad-label">Disciplined loss</div>
+          <div class="tj-quad-desc">Followed the rule, it didn't work — good process</div>
+        </div>
+        <div class="tj-quad-cell q-lw">
+          <div class="tj-quad-num">${counts['q-lw']}<span style="font-size:12px;opacity:0.7"> · ${pct(counts['q-lw'])}%</span></div>
+          <div class="tj-quad-label">Lucky win</div>
+          <div class="tj-quad-desc">Broke the rule, got away with it</div>
+        </div>
+        <div class="tj-quad-cell q-ul">
+          <div class="tj-quad-num">${counts['q-ul']}<span style="font-size:12px;opacity:0.7"> · ${pct(counts['q-ul'])}%</span></div>
+          <div class="tj-quad-label">Undisciplined loss</div>
+          <div class="tj-quad-desc">Broke the rule, it cost you</div>
+        </div>
+      </div>
+      ${counts.breakeven ? `<div class="tj-quad-foot">${counts.breakeven} breakeven trade${counts.breakeven > 1 ? 's' : ''} not shown above</div>` : ''}
+    `;
+  }
+
+  function renderTable() {
+    const wrap = $('tj-table-wrap');
+    if (!trades.length) {
+      wrap.innerHTML = '<div class="tj-empty">No trades logged yet. Log your first one on the left — process, not P&amp;L, is the point.</div>';
+      return;
+    }
+    const rows = trades.slice().reverse().filter(t => activeFilter === 'all' || classify(t) === activeFilter);
+    if (!rows.length) {
+      wrap.innerHTML = '<div class="tj-empty">No trades match this filter yet.</div>';
+      return;
+    }
+
+    const trHtml = rows.map(t => {
+      const cls = classify(t);
+      const rClass = t.r > 0 ? 'tj-r-pos' : t.r < 0 ? 'tj-r-neg' : 'tj-r-zero';
+      return `
+        <tr class="tj-trade-row ${cls}">
+          <td class="mono">${t.date}</td>
+          <td>${escapeHtml(t.instrument)}</td>
+          <td>${t.direction === 'long' ? 'Long' : 'Short'}</td>
+          <td>${escapeHtml(t.setup) || '<span style="color:var(--ink-faint)">—</span>'}</td>
+          <td class="${rClass}">${fmtR(t.r)}</td>
+          <td>${t.ruleFollowed ? '<span style="color:var(--win)">✓ followed</span>' : '<span style="color:var(--bad)">✕ broke</span>'}</td>
+          <td class="tj-notes-cell">${escapeHtml(t.notes) || ''}</td>
+          <td><button class="tj-del-btn" data-id="${t.id}" title="Delete trade">✕</button></td>
+        </tr>
+      `;
+    }).join('');
+
+    wrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Instrument</th><th>Dir</th><th>Setup</th><th>R</th><th>Rule</th><th>Notes</th><th></th>
+          </tr>
+        </thead>
+        <tbody>${trHtml}</tbody>
+      </table>
+    `;
+
+    wrap.querySelectorAll('.tj-del-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        trades = trades.filter(t => t.id !== btn.dataset.id);
+        await persist();
+        renderAll();
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  init();
+})();
+</script>
