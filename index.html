@@ -228,6 +228,11 @@
   /* position size calculator */
   #tj-root .tj-calc-result { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 4px; font-size: 13px; color: var(--ink-dim); }
   #tj-root .tj-calc-result .big { font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 700; color: var(--primary); }
+
+  /* support link */
+  #tj-root .tj-support-row { text-align: center; margin-top: 18px; font-size: 12px; color: var(--ink-faint); }
+  #tj-root .tj-coffee-link { display: inline-flex; align-items: center; gap: 6px; color: var(--luck); font-size: 12px; text-decoration: none; border: 1px solid rgba(211,162,74,0.35); background: var(--luck-bg); padding: 6px 12px; border-radius: 20px; margin-left: 4px; }
+  #tj-root .tj-coffee-link:hover { border-color: var(--luck); }
 </style>
 
 <div id="tj-root">
@@ -403,6 +408,19 @@
         <button class="tj-reset-btn" id="tj-reset">Clear all trades</button>
       </div>
     </div>
+
+    <div class="tj-support-row">
+      <div style="margin-bottom: 8px;">Found this useful? Support the project:</div>
+      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+        <a href="#" id="tj-upi-link" class="tj-coffee-link">📱 Pay via UPI</a>
+        <a href="#" id="tj-paypal-link" target="_blank" rel="noopener noreferrer" class="tj-coffee-link">🅿️ PayPal</a>
+        <a href="#" id="tj-razorpay-link" target="_blank" rel="noopener noreferrer" class="tj-coffee-link">💳 Razorpay</a>
+      </div>
+      <div style="margin-top: 8px; font-size: 11px;">
+        UPI ID: <span id="tj-upi-id-text" class="mono"></span>
+        <button type="button" id="tj-copy-upi" class="tj-limit-link" style="display:inline; margin-top:0;">copy</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -419,6 +437,15 @@
 
   const BEHAVIOR_TAGS = ['FOMO', 'Revenge trade', 'Hesitated', 'Forced it', 'Oversized', 'Moved stop', 'Cut winner early', 'Chased price', 'Overtraded', 'Followed plan calmly'];
   const LIMIT_KEY = 'tj_daily_limit_v1';
+
+  // ---------- EDIT THESE with your real details ----------
+  const SUPPORT_CONFIG = {
+    upiId: 'jayeshpathak236-1@okicici',  // your real UPI ID
+    upiName: 'Jayesh Pathak',             // name shown in the UPI app
+    paypalUsername: 'YOUR_PAYPAL_USERNAME',
+    razorpayLink: 'https://razorpay.me/@YOUR_HANDLE'
+  };
+  // --------------------------------------------------------
 
   const $ = (id) => document.getElementById(id);
 
@@ -462,6 +489,7 @@
       $('tj-storage-note').innerHTML = '⚠ This browser is blocking local storage (common in private/incognito mode or inside an embedded preview). Trades will only last until you close this tab. Open the downloaded HTML file directly in a normal browser tab to fix this.';
       $('tj-storage-note').style.color = 'var(--bad)';
       setupCalculator();
+      setupSupportLinks();
       renderAll();
       return;
     }
@@ -480,7 +508,26 @@
     }
     $('tj-storage-note').textContent = 'Saved in this browser, on this device';
     setupCalculator();
+    setupSupportLinks();
     renderAll();
+  }
+
+  function setupSupportLinks() {
+    const upiLink = `upi://pay?pa=${encodeURIComponent(SUPPORT_CONFIG.upiId)}&pn=${encodeURIComponent(SUPPORT_CONFIG.upiName)}&cu=INR`;
+    $('tj-upi-link').href = upiLink;
+    $('tj-upi-id-text').textContent = SUPPORT_CONFIG.upiId;
+    $('tj-paypal-link').href = `https://www.paypal.me/${SUPPORT_CONFIG.paypalUsername}`;
+    $('tj-razorpay-link').href = SUPPORT_CONFIG.razorpayLink;
+
+    $('tj-copy-upi').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(SUPPORT_CONFIG.upiId);
+        $('tj-copy-upi').textContent = 'copied!';
+        setTimeout(() => { $('tj-copy-upi').textContent = 'copy'; }, 1500);
+      } catch (e) {
+        alert('UPI ID: ' + SUPPORT_CONFIG.upiId);
+      }
+    });
   }
 
   function setupCalculator() {
